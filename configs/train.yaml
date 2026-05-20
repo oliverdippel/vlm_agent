@@ -32,7 +32,7 @@ data:
   data_dir: data/raw/libero/datasets/libero_spatial
   num_workers: 0
   shuffle: true
-  action_space_path: data/processed/libero/libero_spatial/action_space.npz
+  action_stats_path: data/processed/libero/libero_spatial/action_stats.npz
   normalize_actions: true
 
 env:

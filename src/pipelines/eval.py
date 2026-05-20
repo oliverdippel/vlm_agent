@@ -43,12 +43,17 @@ class Evaluator:
 
                 inference_times_ms.append((end - start) * 1000.0)
 
+                action = action.squeeze(0)
+
                 if self.action_normalizer is not None:
-                    action_np = self.action_normalizer.denormalize(
-                        action.squeeze(0)
-                    ).detach().cpu().numpy()
+                    action_np = self.action_normalizer.denormalize(action)
                 else:
-                    action_np = action.squeeze(0).detach().cpu().numpy()
+                    action_np = action
+
+                if hasattr(action_np, "detach"):
+                    action_np = action_np.detach().cpu().numpy()
+
+                action_np = np.asarray(action_np, dtype=np.float32)
 
                 try:
                     img, reward, done, info = self.env.step(action_np)
