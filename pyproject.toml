@@ -9,7 +9,9 @@ dependencies = [
     "bitsandbytes>=0.49.2",
     "einops>=0.8.2",
     "gymnasium>=1.3.0",
+    "huggingface-hub>=1.14.0",
     "hydra-core>=1.3.2",
+    "libero>=0.1.1",
     "numpy>=2.4.4",
     "omegaconf>=2.3.0",
     "pytest>=9.0.3",
@@ -18,4 +20,17 @@ dependencies = [
     "torchvision>=0.26.0",
     "transformers>=5.8.1",
     "wandb>=0.26.1",
+]
+
+# RUFF config
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I"]
+
+# pytest config
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "slow: tests that load real model weights or require GPU/MPS",
 ]

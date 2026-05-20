@@ -1,0 +1,28 @@
+program: main.py
+method: grid
+
+metric:
+  name: eval/success_rate
+  goal: maximize
+
+parameters:
+  ablation.n_euler_steps:
+    values: [5, 10, 20]
+
+  ablation.use_ema:
+    values: [true]
+
+  optimizer.lr:
+    values: [0.0003]
+
+  training.batch_size:
+    values: [64]
+
+command:
+  - ${env}
+  - uv
+  - run
+  - python
+  - ${program}
+  - ${args_no_hyphens}
+  - wandb.mode=online
