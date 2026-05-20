@@ -2,8 +2,7 @@ import h5py
 import numpy as np
 import torch
 
-from src.data.ingestion.libero_dataset import get_dataloader
-from src.data.ingestion.libero_dataset import LIBERODataset
+from src.data.ingestion.libero_dataset import LIBERODataset, get_dataloader
 from src.data.transformation.transforms import get_train_transform
 
 
@@ -13,8 +12,6 @@ def _create_mock_libero_hdf5(
     image_size: int = 144,
     num_steps: int = 10,
 ):
-    import h5py
-    import numpy as np
 
     h5_path = tmp_path / "mock_task_demo.hdf5"
 

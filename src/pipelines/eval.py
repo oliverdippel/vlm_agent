@@ -2,15 +2,24 @@ import time
 
 import numpy as np
 import torch
+
 import wandb
 
 
 class Evaluator:
-    def __init__(self, env, backbone, n_eval_episodes: int = 20, max_steps: int = 200):
+    def __init__(
+        self, 
+        env, 
+        backbone, 
+        n_eval_episodes: int = 20, 
+        max_steps: int = 200, 
+        action_normalizer=None
+    ):
         self.env = env
         self.backbone = backbone
         self.n_eval_episodes = n_eval_episodes
         self.max_steps = max_steps
+        self.action_normalizer = action_normalizer
 
     def evaluate(self, policy, step: int) -> dict[str, float]:
         successes = []
@@ -34,7 +43,12 @@ class Evaluator:
 
                 inference_times_ms.append((end - start) * 1000.0)
 
-                action_np = action.squeeze(0).detach().cpu().numpy()
+                if self.action_normalizer is not None:
+                    action_np = self.action_normalizer.denormalize(
+                        action.squeeze(0)
+                    ).detach().cpu().numpy()
+                else:
+                    action_np = action.squeeze(0).detach().cpu().numpy()
 
                 try:
                     img, reward, done, info = self.env.step(action_np)

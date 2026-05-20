@@ -1,7 +1,9 @@
 import torch
-from transformers import AutoProcessor, PaliGemmaForConditionalGeneration
 from PIL import Image
+from transformers import AutoProcessor, PaliGemmaForConditionalGeneration
+
 from src.utils.device import get_device
+
 
 class FrozenVLMBackbone:
     """
@@ -32,7 +34,11 @@ class FrozenVLMBackbone:
             p.requires_grad_(False)
     
     @torch.no_grad()
-    def encode(self, images: list[Image.Image], instructions: list[str]) -> torch.Tensor:
+    def encode(
+        self,
+        images: list[Image.Image],
+        instructions: list[str]
+    ) -> torch.Tensor:
         """
         Return conditioning embeddings for the flow head.
 

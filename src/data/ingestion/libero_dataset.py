@@ -4,11 +4,14 @@ import h5py
 import torch
 from torch.utils.data import DataLoader, Dataset
 
+from src.data.transformation.normalizer import ActionNormalizer
+
 
 class LIBERODataset(Dataset):
     """
     PyTorch Dataset for LIBERO data stored in HDF5 files.
-        - Each HDF5 file contains multiple demos, each with RGB images and 7-DoF actions.
+        - Each HDF5 file contains multiple demos, 
+          each with RGB images and 7-DoF actions.
         - The dataset index is built lazily to avoid loading all data into memory.
         - __getitem__ loads only the requested sample from disk.
 
@@ -18,9 +21,15 @@ class LIBERODataset(Dataset):
         instruction: str
     """
 
-    def __init__(self, data_dir: str, transform=None):
+    def __init__(
+            self,
+            data_dir: str, 
+            transform=None, 
+            action_normalizer: ActionNormalizer = None
+    ):
         self.data_dir = Path(data_dir)
         self.transform = transform
+        self.action_normalizer = action_normalizer
 
         # List of all training samples as lightweight references.
         self.samples = self._build_index()
@@ -77,6 +86,9 @@ class LIBERODataset(Dataset):
 
         action = torch.from_numpy(action).float()
 
+        if self.action_normalizer is not None:
+            action = self.action_normalizer.normalize(action)
+
         assert action.shape[-1] == 7
 
         return {
@@ -91,6 +103,7 @@ def get_dataloader(
     batch_size: int = 32,
     num_workers: int = 0,
     shuffle: bool = True,
+    action_normalizer: ActionNormalizer = None,
 ) -> DataLoader:
     """
     DataLoader for LIBERO data.
@@ -100,6 +113,7 @@ def get_dataloader(
     dataset = LIBERODataset(
         data_dir=data_dir,
         transform=get_train_transform(),
+        action_normalizer=action_normalizer,
     )
 
     return DataLoader(

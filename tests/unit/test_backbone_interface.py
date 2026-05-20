@@ -1,6 +1,7 @@
+import numpy as np
 import torch
 from PIL import Image
-import numpy as np
+
 from src.models.backbone import FrozenVLMBackbone
 
 

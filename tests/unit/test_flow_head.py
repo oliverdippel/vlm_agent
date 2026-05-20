@@ -1,8 +1,9 @@
-import torch
 import pytest
+import torch
 import torch.nn.functional as F
-from src.models.flow_head import FlowMatchingHead, VectorFieldNetwork
+
 from src.entity.config_entity import FlowConfig
+from src.models.flow_head import FlowMatchingHead
 
 
 @pytest.fixture

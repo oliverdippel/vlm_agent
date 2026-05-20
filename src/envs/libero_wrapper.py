@@ -1,8 +1,8 @@
-import numpy as np
-from libero.libero import benchmark
-from libero.libero.envs import OffScreenRenderEnv
 from pathlib import Path
-from libero.libero import get_libero_path
+
+import numpy as np
+from libero.libero import benchmark, get_libero_path
+from libero.libero.envs import OffScreenRenderEnv
 
 
 class LIBEROWrapper:

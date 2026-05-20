@@ -1,8 +1,8 @@
+import copy
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from dataclasses import dataclass
-import copy
 
 
 class SinusoidalTimeEmbedding(nn.Module):

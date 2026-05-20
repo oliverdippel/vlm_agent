@@ -1,14 +1,13 @@
-import wandb
 from omegaconf import DictConfig, OmegaConf
 
+import wandb
 from src.data.ingestion.libero_dataset import get_dataloader
+from src.data.transformation.normalizer import ActionNormalizer
 from src.models.backbone import FrozenVLMBackbone
-from src.models.mock_backbone import MockVLMBackbone
 from src.models.flow_head import FlowMatchingHead
+from src.models.mock_backbone import MockVLMBackbone
 from src.models.train import BCTrainer
-from src.utils import device
 from src.utils.device import get_device
-from tests.unit.test_flow_head import cfg
 
 
 def run_bc_pipeline(cfg: DictConfig) -> None:
@@ -43,15 +42,22 @@ def run_bc_pipeline(cfg: DictConfig) -> None:
 
     flow_head = FlowMatchingHead(cfg.flow)
 
+    if cfg.data.normalize_actions:
+        action_normalizer = ActionNormalizer.load(cfg.data.action_stats_path)
+    else:
+        action_normalizer = None
+
     dataloader = get_dataloader(
         data_dir=cfg.data.data_dir,
         batch_size=cfg.training.batch_size,
         num_workers=cfg.data.num_workers,
         shuffle=cfg.data.shuffle,
+        action_normalizer=action_normalizer,
     )
 
     if cfg.eval.enabled:
         from libero.libero.benchmark.libero_suite_task_map import libero_task_map
+
         from src.envs.libero_wrapper import LIBEROWrapper
         from src.pipelines.eval import Evaluator
 
@@ -73,6 +79,7 @@ def run_bc_pipeline(cfg: DictConfig) -> None:
             env=env,
             backbone=backbone,
             n_eval_episodes=cfg.eval.n_eval_episodes,
+            action_normalizer=action_normalizer,
         )
     else:
         evaluator = None

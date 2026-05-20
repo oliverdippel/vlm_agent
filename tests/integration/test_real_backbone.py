@@ -1,10 +1,9 @@
+import numpy as np
 import pytest
 import torch
 from PIL import Image
-import numpy as np
 
 from src.models.backbone import FrozenVLMBackbone
-
 
 pytestmark = pytest.mark.slow
 

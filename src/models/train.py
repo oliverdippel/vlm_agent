@@ -2,10 +2,10 @@ from pathlib import Path
 
 import torch
 import torch.optim as optim
-import wandb
-from torch.optim.lr_scheduler import CosineAnnealingLR
 from omegaconf import OmegaConf
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
+import wandb
 from src.models.flow_head import FlowMatchingHead
 
 
@@ -104,7 +104,6 @@ class BCTrainer:
         actions = batch["action"].to(self.device)
         instructions = batch["instruction"]
 
-        from PIL import Image
         import torchvision.transforms.functional as TF
 
         pil_imgs = [TF.to_pil_image(img) for img in images]
@@ -154,7 +153,9 @@ class BCTrainer:
         return policy
 
     def _save_checkpoint(self, epoch: int):
-        checkpoint_dir = Path(self.cfg.logging.checkpoint_dir)
+        run_id = wandb.run.id if wandb.run is not None else "debug"
+
+        checkpoint_dir = Path(self.cfg.logging.checkpoint_dir) / run_id
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
         path = checkpoint_dir / f"flow_bc_epoch{epoch}.pt"

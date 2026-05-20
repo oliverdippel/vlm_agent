@@ -78,7 +78,7 @@ Image + Language instruction
 
 ## Architecture
 
-### Frozen VLM backbone — `src/features/feature_engineering.py`
+### Frozen VLM backbone — `src/models/backbone.py`
 
 [PaliGemma-3B](https://huggingface.co/google/paligemma-3b-pt-224) loaded in 4-bit quantization via `bitsandbytes`, running on Apple MPS (M3). Provides rich visual and language understanding with zero gradient flow — all expressivity comes from the action head.
 
@@ -89,7 +89,7 @@ cond = backbone.encode(images, instructions)  # (B, 4096)
 
 ### Conditional Flow Matching head — `src/models/flow_head.py`
 
-The core contribution. A residual MLP that predicts the vector field $v_\theta(x_t, t, c)$ transporting noise → action along straight-line paths:
+A residual MLP that predicts the vector field $v_\theta(x_t, t, c)$ transporting noise → action along straight-line paths:
 
 $$\mathcal{L}_\text{CFM} = \mathbb{E}_{t, x_0, x_1} \left[\| v_\theta((1-t)x_0 + tx_1,\ t,\ c) - (x_1 - x_0) \|^2 \right]$$
 
@@ -123,9 +123,8 @@ vlm_agent/
 │   │   └── config_entity.py   # Typed dataclasses (FlowConfig etc.)
 │   ├── envs/
 │   │   └── libero_wrapper.py  # LIBERO gym interface
-│   ├── features/
-│   │   └── feature_engineering.py  # Frozen PaliGemma backbone
-│   ├── models/
+│   ├── models/  │   
+│   │   ├── backbone.py        # Frozen PaliGemma backbone
 │   │   ├── flow_head.py       # CFM loss + Euler sampler ← core
 │   │   ├── train.py           # BC training loop
 │   │   └── evaluate.py        # Rollout evaluator
@@ -217,7 +216,7 @@ All ablations tracked in W&B. See `reports/` for figures.
 
 ## Hardware
 
-Developed and trained entirely on an **Apple M3 MacBook Pro** using MPS acceleration. PaliGemma-3B runs in 4-bit quantization (~6GB memory). Full BC training run: ~X hours.
+PaliGemma-3B runs in 4-bit quantization (~6GB memory). Full BC training run: ~X hours.
 
 ---
 
@@ -240,19 +239,6 @@ Developed and trained entirely on an **Apple M3 MacBook Pro** using MPS accelera
   title={LIBERO: Benchmarking Knowledge Transfer for Lifelong Robot Learning},
   author={Liu et al.},
   year={2023}
-}
-```
-
----
-
-## Citation
-
-```bibtex
-@misc{dippel2025minipizero,
-  title={mini-π0: VLA Agent with Flow Matching Action Head},
-  author={Oliver Dippel},
-  year={2025},
-  url={https://github.com/oliverdippel/vlm_agent}
 }
 ```
 
